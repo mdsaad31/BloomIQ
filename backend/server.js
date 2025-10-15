@@ -84,12 +84,20 @@ app.use((err, req, res, next) => {
 
 // Start server - bind to 0.0.0.0 to accept connections from other devices
 app.listen(PORT, '0.0.0.0', () => {
+  const isProduction = process.env.NODE_ENV === 'production';
+  
   console.log(`\n${'='.repeat(60)}`);
   console.log(`🌿 BloomIQ Backend Server`);
   console.log(`${'='.repeat(60)}`);
   console.log(`✅ Server running on port ${PORT}`);
-  console.log(`🔗 Local: http://localhost:${PORT}`);
-  console.log(`🔗 Network: http://10.250.134.24:${PORT}`);
+  
+  if (isProduction) {
+    console.log(`🔗 Production URL: https://bloomiq.onrender.com`);
+  } else {
+    console.log(`🔗 Local: http://localhost:${PORT}`);
+    console.log(`🔗 Network: http://10.250.134.24:${PORT}`);
+  }
+  
   console.log(`🔗 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🤖 ML Service: Integrated (Roboflow API)`);
   console.log(`📊 Workspace: ${process.env.ROBOFLOW_WORKSPACE}`);
