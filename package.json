@@ -1,0 +1,17 @@
+{
+  "name": "bloomiq-keep-alive",
+  "version": "1.0.0",
+  "description": "Keep-alive service for BloomIQ backend",
+  "main": "keep-alive.js",
+  "scripts": {
+    "keep-alive": "node keep-alive.js",
+    "keep-alive:python": "python keep-alive.py"
+  },
+  "keywords": ["keep-alive", "cron", "uptime"],
+  "author": "BloomIQ Team",
+  "license": "MIT",
+  "dependencies": {
+    "node-cron": "^3.0.3",
+    "axios": "^1.6.2"
+  }
+}

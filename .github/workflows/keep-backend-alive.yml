@@ -1,0 +1,36 @@
+name: Keep Backend Alive
+
+# Run every 10 minutes to prevent Render free tier from sleeping
+on:
+  schedule:
+    # Runs every 10 minutes (Render sleeps after 15 minutes of inactivity)
+    - cron: '*/10 * * * *'
+  
+  # Allow manual triggering from GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  ping-backend:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Ping Backend Health Endpoint
+        run: |
+          echo "🔄 Pinging BloomIQ Backend..."
+          
+          # Ping health endpoint
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://bloomiq.onrender.com/health)
+          
+          if [ $response -eq 200 ]; then
+            echo "✅ Backend is alive! Response code: $response"
+          else
+            echo "⚠️  Backend returned code: $response"
+          fi
+          
+          # Also ping root endpoint
+          curl -s https://bloomiq.onrender.com/ > /dev/null
+          echo "✅ Pinged root endpoint"
+          
+      - name: Log Timestamp
+        run: |
+          echo "⏰ Ping completed at: $(date)"
