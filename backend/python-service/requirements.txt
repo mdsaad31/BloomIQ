@@ -1,0 +1,21 @@
+# BloomIQ Python ML Service - Roboflow Edition
+
+# Web framework
+Flask==3.0.0
+Werkzeug==3.0.1
+
+# Roboflow Inference SDK (Main requirement)
+inference-sdk
+
+# Image processing
+Pillow>=10.0.0
+
+# Environment variables
+python-dotenv>=1.0.0
+
+# Utilities
+requests>=2.31.0
+python-multipart>=0.0.6
+
+# Optional: For local testing and utilities
+numpy>=1.24.0

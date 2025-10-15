@@ -1,0 +1,53 @@
+# Ignore node modules
+node_modules/
+
+# Ignore environment files
+.env
+.env.local
+
+# Ignore database files
+*.sqlite
+*.db
+
+# Ignore uploaded images
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Ignore Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+backend/python-service/temp_uploads/*
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Ignore build outputs
+web/build/
+mobile/android/app/build/
+mobile/ios/build/
+
+# Ignore logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignore test coverage
+coverage/
+
+# Mobile specific
+mobile/android/.gradle/
+mobile/android/local.properties
+mobile/.expo/
+mobile/.expo-shared/
+
+# Models (optional - remove if you want to commit models)
+backend/models/*.pt
+!backend/models/README.md

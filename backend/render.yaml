@@ -1,0 +1,28 @@
+# Render.com deployment configuration for BloomIQ Backend
+
+services:
+  - type: web
+    name: bloomiq-backend
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ROBOFLOW_API_KEY
+        sync: false
+      - key: ROBOFLOW_WORKSPACE
+        value: moh-s15o3
+      - key: ROBOFLOW_WORKFLOW
+        value: custom-workflow
+      - key: WEATHER_API_KEY
+        sync: false
