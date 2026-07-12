@@ -8,7 +8,7 @@ const fs = require('fs');
 dotenv.config();
 
 // Import MongoDB connection
-const connectDB = require('./config/database');
+const { connectDB, getDBStatus } = require('./config/database');
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -19,9 +19,6 @@ const profileRoutes = require('./routes/profile');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
-// Connect to MongoDB
-connectDB();
 
 // Middleware
 app.use(cors());
@@ -64,11 +61,14 @@ app.get('/', (req, res) => {
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
+  const dbStatus = getDBStatus();
+
+  res.status(dbStatus.connected ? 200 : 503).json({ 
+    status: dbStatus.connected ? 'ok' : 'degraded', 
     timestamp: new Date().toISOString(),
     service: 'BloomIQ Backend',
-    mongodb: 'connected',
+    mongodb: dbStatus.connected ? 'connected' : 'disconnected',
+    ...(dbStatus.error && { mongodbError: dbStatus.error }),
     uptime: process.uptime()
   });
 });
@@ -82,27 +82,38 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server - bind to 0.0.0.0 to accept connections from other devices
-app.listen(PORT, '0.0.0.0', () => {
-  const isProduction = process.env.NODE_ENV === 'production';
-  
-  console.log(`\n${'='.repeat(60)}`);
-  console.log(`🌿 BloomIQ Backend Server`);
-  console.log(`${'='.repeat(60)}`);
-  console.log(`✅ Server running on port ${PORT}`);
-  
-  if (isProduction) {
-    console.log(`🔗 Production URL: https://bloomiq.onrender.com`);
-  } else {
-    console.log(`🔗 Local: http://localhost:${PORT}`);
-    console.log(`🔗 Network: http://10.250.134.24:${PORT}`);
+const startServer = async () => {
+  try {
+    await connectDB();
+
+    // Start server - bind to 0.0.0.0 to accept connections from other devices
+    app.listen(PORT, '0.0.0.0', () => {
+      const isProduction = process.env.NODE_ENV === 'production';
+      
+      console.log(`\n${'='.repeat(60)}`);
+      console.log(`🌿 BloomIQ Backend Server`);
+      console.log(`${'='.repeat(60)}`);
+      console.log(`✅ Server running on port ${PORT}`);
+      
+      if (isProduction) {
+        console.log(`🔗 Production URL: https://bloomiq.onrender.com`);
+      } else {
+        console.log(`🔗 Local: http://localhost:${PORT}`);
+        console.log(`🔗 Network: http://10.250.134.24:${PORT}`);
+      }
+      
+      console.log(`🔗 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🤖 ML Service: Integrated (Roboflow API)`);
+      console.log(`📊 Workspace: ${process.env.ROBOFLOW_WORKSPACE}`);
+      console.log(`🔄 Workflow: ${process.env.ROBOFLOW_WORKFLOW_ID}`);
+      console.log(`${'='.repeat(60)}\n`);
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server due to MongoDB connection failure.');
+    process.exit(1);
   }
-  
-  console.log(`🔗 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🤖 ML Service: Integrated (Roboflow API)`);
-  console.log(`📊 Workspace: ${process.env.ROBOFLOW_WORKSPACE}`);
-  console.log(`🔄 Workflow: ${process.env.ROBOFLOW_WORKFLOW_ID}`);
-  console.log(`${'='.repeat(60)}\n`);
-});
+};
+
+startServer();
 
 module.exports = app;
