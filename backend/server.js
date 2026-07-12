@@ -109,7 +109,7 @@ const startServer = async () => {
       console.log(`${'='.repeat(60)}\n`);
     });
   } catch (error) {
-    console.error('❌ Failed to start server due to MongoDB connection failure.');
+    console.error('❌ Failed to start server due to MongoDB connection failure:', error.message);
     process.exit(1);
   }
 };
